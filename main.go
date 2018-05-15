@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"github.com/rakyll/statik/fs"
 	"github.com/skratchdot/open-golang/open"
-	_ "./statik"
+	_ "github.com/fenril22/statik"
 	"log"
 
 	//files "./html"
@@ -21,7 +21,7 @@ func main() {
 	listen := make(chan bool)
 
 	go func() {
-		<- listen
+		<-listen
 		open.Run("http://localhost:8765")
 		log.Println("browser start")
 	}()
