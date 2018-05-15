@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"github.com/rakyll/statik/fs"
 	"github.com/skratchdot/open-golang/open"
-	_ "github.com/fenril22/statik"
+	_ "github.com/fenril22/work-timer/statik"
 	"log"
 
 	//files "./html"
