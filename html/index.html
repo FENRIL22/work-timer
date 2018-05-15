@@ -1,0 +1,54 @@
+<script>
+	//https://www.webprofessional.jp/browser-notification-api/
+	(function() {
+		if ("Notification" in window) {
+			var permission = Notification.permission;
+
+			if (permission === "denied" || permission === "granted") {
+				return;
+			}
+
+			Notification.requestPermission().then(function() {
+				var notification = new Notification("Nofy Enabled");
+			});
+  }
+})();
+
+function Timer(time_length) {
+	var time = time_length;
+	console.log(time)
+
+	var waitFunc = function() {
+		if (time == 0) {
+			Notify()
+			return
+		} else {
+			time--
+			UpdateView(parseInt(time/60), time%60)
+		};
+		clearTimeout(id);
+		id = setTimeout(waitFunc, 1000);
+	}
+	var id = setTimeout(waitFunc, 1000);
+	console.log(time)
+}
+
+function UpdateView(hour, min) {
+	var h = document.getElementById('view-hour')
+	var m = document.getElementById('view-min')
+	h.innerHTML=hour
+	m.innerHTML=min
+
+}
+
+function Notify() {
+	var audio = new Audio("./decision1.mp3");
+	var notification = new Notification("Hello, world!");
+	audio.play();
+}
+</script>
+
+<div id="view-hour">00</div> Hour <div id="view-min">00</div> Min
+
+<input id="timer45" type="button" onclick="Timer(60*45)" value="Timer45" />
+<input id="timer15" type="button" onclick="Timer(60*15)" value="Timer15" />
