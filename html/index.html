@@ -20,7 +20,7 @@ function Timer(time_length) {
 
 	var waitFunc = function() {
 		if (time == 0) {
-			Notify()
+			Notify(time_length%60 +" is arrived.")
 			return
 		} else {
 			time--
@@ -41,9 +41,9 @@ function UpdateView(hour, min) {
 
 }
 
-function Notify() {
+function Notify(msg) {
 	var audio = new Audio("./decision1.mp3");
-	var notification = new Notification("Hello, world!");
+	var notification = new Notification(msg);
 	audio.play();
 }
 </script>
@@ -52,5 +52,6 @@ function Notify() {
 
 <input id="timer45" type="button" onclick="Timer(60*45)" value="Timer45" />
 <input id="timer15" type="button" onclick="Timer(60*15)" value="Timer15" />
-<input id="timer15" type="button" onclick="Timer(60*25)" value="Timer25" />
-<input id="timer15" type="button" onclick="Timer(60*5)" value="Timer5" />
+<input id="timer25" type="button" onclick="Timer(60*25)" value="Timer25" />
+<input id="timer5" type="button" onclick="Timer(60*5)" value="Timer5" />
+<input id="testbutton" type="button" onclick="Notify('TestNotify')" value="TestNotify" />
