@@ -5,12 +5,17 @@ import (
 	"github.com/gen2brain/beeep"
 	"log"
 	"runtime"
+    "bufio"
+    "strings"
+    "github.com/dbatbold/beep"
 )
 
 func Notify(title string, body string, img_path string) {
 	switch os := runtime.GOOS; os {
 	case "darwin":
 		OSXNotify(title, body, img_path)
+	case "linux":
+		LinuxNotify(title, body, img_path)
 	default:
 		BeeepNotify(title, body, img_path)
 	}
@@ -38,3 +43,27 @@ func BeeepNotify(title string, body string, img_path string) {
 		panic(err)
 	}
 }
+
+func LinuxNotify(title string, body string, img_path string) {
+    music := beep.NewMusic("") // output can be file as "music.wav"
+    volume := 50
+
+    if err := beep.OpenSoundDevice("default"); err != nil {
+        log.Fatal(err)
+    }
+    if err := beep.InitSoundDevice(); err != nil {
+        log.Fatal(err)
+    }
+    beep.PrintSheet = false
+    defer beep.CloseSoundDevice()
+
+    musicScore := `
+		VP SA8 SR9 A9HRDE q
+    `
+
+    reader := bufio.NewReader(strings.NewReader(musicScore))
+    go music.Play(reader, volume)
+    music.Wait()
+    beep.FlushSoundBuffer()
+}
+
