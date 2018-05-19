@@ -46,7 +46,7 @@ func BeeepNotify(title string, body string, img_path string) {
 
 func LinuxNotify(title string, body string, img_path string) {
     music := beep.NewMusic("") // output can be file as "music.wav"
-    volume := 50
+    volume := 25
 
     if err := beep.OpenSoundDevice("default"); err != nil {
         log.Fatal(err)
