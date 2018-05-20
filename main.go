@@ -63,6 +63,12 @@ func main() {
 			Tm = t
 		case "4":
 			Tm = NewCountDownTimer()
+		case "8":
+			t := NewIntervalTimer()
+			t.WTime = 10
+			t.STime = 5
+			t.Init()
+			Tm = t
 		case "9":
 			t := NewCountDownTimer()
 			t.Time = 5
@@ -85,7 +91,7 @@ func main() {
 
 	})
 
-	ui.Handle("/sys/kbd/q", func(ui.Event) {
+	ui.Handle("/sys/kbd/C-c", func(ui.Event) {
 		ui.StopLoop()
 	})
 
@@ -106,13 +112,14 @@ type IntervalTimer struct {
 	WTime   int
 	STime   int
 	counter int
+	term	int
 	freeze  bool
 }
 
 func NewIntervalTimer() *IntervalTimer {
 	s := new(IntervalTimer)
 	s.WTime = 60 * 25
-	s.STime = 60 * 15
+	s.STime = 60 * 5
 	s.Init()
 
 	return s
@@ -122,31 +129,64 @@ func (s *IntervalTimer) Init() {
 	s.counter = s.WTime
 	s.freeze = true
 	s.iswork = true
+	s.term = 1
 }
 
 func (s *IntervalTimer) Tick() {
 	if !s.freeze {
-		if s.counter > 0 {
-			s.counter -= 1
+		if s.iswork {
+			s.tick_work()
 		} else {
-			s.freeze = !s.freeze
-			notifydriver.Notify("Timer Arrived", fmt.Sprintf("%d & %d", s.WTime%60, s.STime)+"Min Arrived", "")
+			s.tick_sleep()
 		}
 	}
 }
 
+func (s *IntervalTimer) tick_work() {
+	if s.counter > 0 {
+		s.counter -= 1
+	} else {
+		s.iswork = false
+		notifydriver.Notify("Go To Sleep", fmt.Sprintf("%d", s.WTime%60)+" Min", "")
+		if s.term >= 4 {
+			notifydriver.Notify("Looooong Work", "sleep long time?", "")
+		}
+	}
+}
+
+func (s *IntervalTimer) tick_sleep() {
+	if s.counter < s.STime {
+		s.counter++
+	} else {
+		s.iswork = true
+		s.counter = s.WTime
+		s.term++
+		notifydriver.Notify("Go To Work", fmt.Sprintf("%d", s.STime)+" Min", "")
+	}
+}
+
 func (s *IntervalTimer) Freeze() {
+	s.freeze = !s.freeze
 }
 
 func (s *IntervalTimer) Reset() {
+	s.Init()
 }
 
 func (s *IntervalTimer) Percent() int {
-	return 25
+	if s.iswork {
+		return s.counter * 100 / s.WTime
+	} else {
+		return s.counter * 100 / s.STime
+	}
 }
 
 func (s *IntervalTimer) BarColor() ui.Attribute {
-	return ui.ColorWhite
+	if s.iswork {
+		return ui.ColorRed
+	} else {
+		return ui.ColorGreen
+	}
 }
 
 func (s *IntervalTimer) String() string {
@@ -154,9 +194,9 @@ func (s *IntervalTimer) String() string {
 	e := s.counter % 60
 
 	if !s.freeze {
-		return fmt.Sprintf("%02d:%02d", h, e)
+		return fmt.Sprintf("%02d:%02d | %d", h, e, s.term)
 	} else {
-		return fmt.Sprintf("- %02d:%02d -", h, e)
+		return fmt.Sprintf("- %02d:%02d | %d -", h, e, s.term)
 	}
 }
 
