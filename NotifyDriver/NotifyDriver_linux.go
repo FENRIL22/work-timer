@@ -7,7 +7,6 @@ import (
 	"github.com/dbatbold/beep"
 	"github.com/gen2brain/beeep"
 	"log"
-	"runtime"
 	"strings"
 )
 
