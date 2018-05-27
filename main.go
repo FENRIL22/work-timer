@@ -12,6 +12,7 @@ func main() {
 	}
 	defer ui.Close()
 
+	var im_enable bool = true
 	var Tm Timer
 	Tm = NewCountDownTimer()
 
@@ -22,11 +23,12 @@ func main() {
 
 	strs := []string{
 		"[1] IntervalTimer-25-5",
-		"[-] IntervalTimer-45-15",
-		"[3] CountDown-5",
-		"[4] CountDown-15",
-		"[-] CountDown-25",
-		"[-] CountDown-45",
+		"[2] IntervalTimer-48-12",
+		"[3] CountDown-2",
+		"[4] CountDown-5",
+		"[5] CountDown-15",
+		//"[-] CountDown-25",
+		//"[-] CountDown-45",
 	}
 
 	ls := ui.NewList()
@@ -52,36 +54,54 @@ func main() {
 	})
 
 	ui.Handle("/sys/kbd", func(e ui.Event) {
-		str := e.Data.(ui.EvtKbd).KeyStr
-		switch str {
-		case "1":
-			Tm = NewIntervalTimer()
-		case "3":
-			t := NewCountDownTimer()
-			t.Time = 60 * 5
-			t.Init()
-			Tm = t
-		case "4":
-			Tm = NewCountDownTimer()
-		case "8":
-			t := NewIntervalTimer()
-			t.WTime = 10
-			t.STime = 5
-			t.Init()
-			Tm = t
-		case "9":
-			t := NewCountDownTimer()
-			t.Time = 5
-			t.Init()
-			Tm = t
-		case "0":
-			notifydriver.Notify("Test", "Test Notify", "")
+		if im_enable {
+			str := e.Data.(ui.EvtKbd).KeyStr
+			switch str {
+			case "1":
+				Tm = NewIntervalTimer()
+			case "2":
+				t := NewIntervalTimer()
+				t.WTime = 60 * 48
+				t.STime = 60 * 12
+				t.Init()
+				Tm = t
+			case "3":
+				t := NewCountDownTimer()
+				t.Time = 60 * 2
+				t.Init()
+				Tm = t
+			case "4":
+				t := NewCountDownTimer()
+				t.Time = 60 * 5
+				t.Init()
+				Tm = t
+			case "5":
+				Tm = NewCountDownTimer()
+			case "8":
+				t := NewIntervalTimer()
+				t.WTime = 10
+				t.STime = 5
+				t.Init()
+				Tm = t
+			case "9":
+				t := NewCountDownTimer()
+				t.Time = 5
+				t.Init()
+				Tm = t
+			case "0":
+				notifydriver.Notify("Test", "Test Notify", "")
+			}
 		}
 	})
 
 	ui.Handle("/timer/1s", func(e ui.Event) {
 		Tm.Tick()
 
+		if im_enable {
+			g.BorderLabel = "Timer"
+		} else {
+			g.BorderLabel = "Timer - locked -"
+		}
 		g.Label = fmt.Sprint(Tm)
 		g.BarColor = Tm.BarColor()
 		g.Percent = Tm.Percent()
@@ -93,6 +113,10 @@ func main() {
 
 	ui.Handle("/sys/kbd/C-c", func(ui.Event) {
 		ui.StopLoop()
+	})
+
+	ui.Handle("/sys/kbd/C-\\", func(ui.Event) {
+		im_enable = !im_enable
 	})
 
 	ui.Loop()
