@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
-	ui "github.com/airking05/termui"
 	"github.com/fenril22/work-timer/NotifyDriver"
+	//ui "github.com/gizak/termui"
+	ui "github.com/airking05/termui"
+	//"github.com/getlantern/systray"
+	//"github.com/getlantern/systray/example/icon"
+	//"github.com/skratchdot/open-golang/open"
 )
 
 func main() {
@@ -136,7 +140,7 @@ type IntervalTimer struct {
 	WTime   int
 	STime   int
 	counter int
-	term	int
+	term    int
 	freeze  bool
 }
 
